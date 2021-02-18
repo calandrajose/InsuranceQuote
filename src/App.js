@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Form from "./components/Form";
 import Resume from "./components/Resume";
 import Result from "./components/Result";
+import Spinner from "./components/Spinner/Spinner";
 
 const Container = styled.div`
   max-width: 600px;
@@ -26,6 +27,7 @@ function App() {
     }
   })
 
+  const [loading, setLoading] = useState(false)
   const {data, cost} = dataResume;
 
   return (
@@ -34,9 +36,17 @@ function App() {
       <FormContainer>
           <Form 
             setDataResume={setDataResume}
-          />
-          <Resume data={data}/>
-          <Result cost={cost}/>
+            setLoading={setLoading}
+            />
+          {loading ? <Spinner/> : null}
+          
+          {!loading ? (
+            <div>
+              <Resume data={data}/>
+              <Result cost={parseFloat(cost)}/> 
+            </div>
+          )
+            : null}
       </FormContainer>
     </Container>
   );

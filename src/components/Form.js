@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled'
-import {showError, getYearDif, getBrandCost, getContractTypeCost} from '../utility'
+import { getYearDif, getBrandCost, getContractTypeCost, showElement } from '../utility'
+import PropTypes from 'prop-types'
 
 const Field = styled.div`
     display: flex;
@@ -48,35 +49,38 @@ const Error = styled.div`
     margin-bottom:2rem;
 
 `
-const Form = ({setDataResume}) => {
+const Form = ({ setDataResume, setLoading }) => {
     const [data, setData] = useState({
-        brand:'',
-        year:'',
-        contractType:''
+        brand: '',
+        year: '',
+        contractType: ''
     })
     const [error, setError] = useState(false)
 
-    const {brand, year, contractType} = data;
+    const { brand, year, contractType } = data;
 
-    const getData = (e)=>{
+    const getData = (e) => {
         setData({
             ...data,
             [e.target.name]: e.target.value
         })
     }
 
-    const onSubmitFormHandler=(e)=>{
+    const onSubmitFormHandler = (e) => {
         e.preventDefault()
-        if(brand.trim()==='' || year.trim()==='' || contractType.trim()===''){
-            showError(setError)
+        if (brand.trim() === '' || year.trim() === '' || contractType.trim() === '') {
+            showElement(1500, setError)
             return;
         }
-        const yearDif = getYearDif(year)
-        let cost = 2000 //initial cost 2000
-        cost -= (yearDif * 3) * cost / 100 // 3% cheaper per year
-        cost += cost * getBrandCost(brand) // brand origin changes cost
-        cost = parseFloat(cost * getContractTypeCost(contractType) + cost).toFixed(2)
-        setDataResume({data:{brand, year, contractType}, cost})
+        showElement(700, setLoading, () => {
+            const yearDif = getYearDif(year)
+            let cost = 2000 //initial cost 2000
+            cost -= (yearDif * 3) * cost / 100 // 3% cheaper per year
+            cost += cost * getBrandCost(brand) // brand origin changes cost
+            cost = parseFloat(cost * getContractTypeCost(contractType) + cost).toFixed(2)
+            setDataResume({ data: { brand, year, contractType }, cost })
+        })
+
     }
 
     return (
@@ -90,7 +94,7 @@ const Form = ({setDataResume}) => {
                     brand={brand}
                     onChange={getData}
                     name='brand'
-                    >
+                >
                     <option value="">-- Seleccione --</option>
                     <option value="american">-- Americano --</option>
                     <option value="european">-- Europeo --</option>
@@ -123,18 +127,23 @@ const Form = ({setDataResume}) => {
                     type="radio"
                     name="contractType"
                     value="basic"
-                    checked={contractType==='basic'}
-                    onChange={getData}/>Basic
+                    checked={contractType === 'basic'}
+                    onChange={getData} />Basic
                 <InputRadio
                     type="radio"
                     name="contractType"
                     value="full"
-                    checked={contractType==='full'}
-                    onChange={getData}/>Full
+                    checked={contractType === 'full'}
+                    onChange={getData} />Full
             </Field>
             <Button type="submit">Cotizar</Button>
         </form>
     );
 };
+
+Form.propTypes = {
+    setDataResume: PropTypes.func.isRequired,
+    setDataResume:PropTypes.func.isRequired
+} 
 
 export default Form;

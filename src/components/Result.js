@@ -1,5 +1,7 @@
 import React from 'react';
+import {TransitionGroup, CSSTransition} from 'react-transition-group';
 import styled from '@emotion/styled'
+import PropTypes from 'prop-types'
 
 const Message = styled.p`
     background-color: rgb(127,224,237);
@@ -24,16 +26,30 @@ const CostContainer = styled.div`
 `
 
 const Result = ({cost}) => {
-
-
     return (
         (cost===0) ? <Message>Elegi la marca, año y tipo de seguro</Message> 
         : (
             <CostContainer>
-                <CostText> El total es: <strong>${cost}</strong></CostText>
+               <TransitionGroup 
+                    component='strong'
+                    className='result'
+                >
+                   <CSSTransition 
+                        classNames='result'
+                        key={cost}
+                        timeout={{enter:500, exit:500}}
+                   >
+                   <CostText> El total es: <strong>${cost}</strong></CostText>
+                   </CSSTransition>
+               </TransitionGroup>
             </CostContainer>
             )
     );
 };
+
+Result.propTypes = {
+    cost: PropTypes.number.isRequired
+} 
+
 
 export default Result;

@@ -1,8 +1,11 @@
-export const showError = (callback)=>{
+export const showElement = (time, callback, secondAction = null)=>{
     callback(true)
     setTimeout(() => {
         callback(false)
-    }, 1500)   
+        if(secondAction){
+            secondAction()
+        }
+    }, time)   
 }
 
 export const getYearDif = (year)=> new Date().getFullYear() - year;
